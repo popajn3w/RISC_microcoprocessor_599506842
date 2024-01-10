@@ -14,7 +14,7 @@ module alu #(
 integer val;
 integer i;
 
-always @(*)
+always @(*) begin
     if(en)
         case(func)
             5'b01_100: D = $signed(S1) + $signed(S2);
@@ -43,5 +43,8 @@ always @(*)
             5'b11_000: D = S1 << S2;
             default: D = 0;
         endcase
+    else
+        D = 0;
+end
 
 endmodule

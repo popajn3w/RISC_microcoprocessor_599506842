@@ -18,6 +18,7 @@ wire memWrite;
 wire memToReg;
 wire regToReg;
 wire aluEn;
+wire halt;
 wire S2Imm;
 wire regWrite;
 wire [2:0] op [2:0];
@@ -58,6 +59,7 @@ control control0(
     .memToReg(memToReg),
     .regToReg(regToReg),
     .aluEn(aluEn),
+    .halt(halt),
     .S2Imm(S2Imm),
     .regWrite(regWrite),
     .op0(op[0]),
@@ -105,6 +107,7 @@ agu #(
     .addr_width(`A_BITS),
     .data_width(`D_BITS)
 )agu0(
+    .halt(halt),
     .en(~aluEn),
     .func(instr[14:9]),
     .pc_in(pc_curr),

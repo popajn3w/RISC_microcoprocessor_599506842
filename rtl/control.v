@@ -6,6 +6,7 @@ module control(
     output reg memToReg,
     output reg regToReg,
     output reg aluEn,
+    output reg halt,
     output reg S2Imm,
     output reg regWrite,
     output reg [2:0] op0,
@@ -20,6 +21,7 @@ always @(*) begin
     memToReg = 0;
     regToReg = 0;
     aluEn = 1;
+    halt = 0;
     S2Imm = 0;
     regWrite = 0;
     op0 = instr[8:6];
@@ -59,7 +61,7 @@ always @(*) begin
                        memToReg = 1;
                        aluEn = 0;
                        regWrite = 1;
-                       op0 = instr[8:6];    // op0
+                       op0 = instr[10:8];    // op0
                        op1 = instr[2:0];    // op1
                        op2 = instr[2:0];
                    end
@@ -67,18 +69,18 @@ always @(*) begin
                        memRead = 1;
                        memWrite = 1;
                        aluEn = 0;
-                       op0 = instr[8:6];    // op0
-                       op1 = instr[2:0];    // op1
-                       op2 = instr[2:0];
+                       op0 = instr[10:8];
+                       op1 = instr[10:8];    // op0
+                       op2 = instr[2:0];    // op1
                    end
         5'b0101_0: begin    // LOADC op0 const
                        memToReg = 1;
                        regToReg = 1;
                        aluEn = 0;
                        regWrite = 1;
-                       op0 = instr[8:6];
-                       op1 = instr[8:6];
-                       op2 = instr[8:6];
+                       op0 = instr[10:8];
+                       op1 = instr[10:8];
+                       op2 = instr[10:8];
                    end
     endcase
 
@@ -113,12 +115,12 @@ always @(*) begin
     endcase
 
     case(instr)
-        32'b0111_0010_0000_0000_0000_0000_0000_0000: aluEn=0;    // NOP
-        32'b0111_0011_1111_1111_1111_1111_1111_1111: aluEn=0;    // HALT
+        32'b0111_0010_0000_0000_0000_0000_0000_0000: aluEn= 0;    // NOP
+        32'b0111_0011_1111_1111_1111_1111_1111_1111: begin
+                                                         aluEn= 0;
+                                                         halt = 1;    // HALT
+                                                     end
     endcase
 end
-
-reg aluUnaryOp;
-reg aluBinaryOp;
 
 endmodule 
