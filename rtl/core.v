@@ -15,8 +15,8 @@ wire [`I_BITS-1 : 0] instr;
 
 wire memRead;
 wire memWrite;
-wire memToReg;
-wire regToReg;
+wire aluToReg;
+wire constToReg;
 wire aluEn;
 wire halt;
 wire S2Imm;
@@ -56,8 +56,8 @@ control control0(
     .instr(instr),
     .memRead(memRead),
     .memWrite(memWrite),
-    .memToReg(memToReg),
-    .regToReg(regToReg),
+    .aluToReg(aluToReg),
+    .constToReg(constToReg),
     .aluEn(aluEn),
     .halt(halt),
     .S2Imm(S2Imm),
@@ -67,7 +67,7 @@ control control0(
     .op2(op[2])
 );
 
-registers_8regs #(
+register_file_full_seq #(
     .index_width(3),
     .reg_width(`D_BITS)
 )registers0(
@@ -136,16 +136,16 @@ mux2 #(
 )mux2_0(
     .in0(dataRam),
     .in1(wr_dataRam),
-    .sel(regToReg),
+    .sel(constToReg),
     .out(resMem)
 );
 
 mux2 #(
     .data_width(`D_BITS)
 )mux2_1(
-    .in0(resAlu),
-    .in1(resMem),
-    .sel(memToReg),
+    .in0(resMem),
+    .in1(resAlu),
+    .sel(aluToReg),
     .out(D)
 );
 

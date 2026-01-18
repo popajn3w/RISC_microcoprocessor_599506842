@@ -1,7 +1,7 @@
 `include "defs.vh"
 `include "timescale.vh"
 
-// combinational read, sequential negedge write
+// combinational read, sequential posedge write
 module sram #(
     parameter addr_width = 16,
     parameter data_width = 32
@@ -16,7 +16,7 @@ module sram #(
 
 reg [data_width-1 : 0] memory [0 : (1<<addr_width)-1];
 
-always @(negedge clk) begin
+always @(posedge clk) begin
     if(we)
         memory[addr] <= wr_data;
 end

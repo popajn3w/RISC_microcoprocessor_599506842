@@ -1,7 +1,7 @@
 `include "defs.vh"
 `include "timescale.vh"
 
-module registers_8regs #(
+module register_file_full_seq #(
     parameter index_width = 3,
     parameter reg_width = 32
 )(
@@ -19,7 +19,7 @@ module registers_8regs #(
 reg [reg_width-1 : 0] regs [0 : (1<<index_width)-1];
 integer addr_internal;
 
-always @(posedge clk) begin
+always @(negedge clk) begin
     if(!rstn)
         for(addr_internal=0;  addr_internal < (1<<index_width); addr_internal=addr_internal+1)
             regs[addr_internal] <= 0;
@@ -28,7 +28,7 @@ always @(posedge clk) begin
     S2 <= regs[op2];
 end
 
-always @(negedge clk)
+always @(posedge clk)
     if(we)
         regs[op0] <= D;
 

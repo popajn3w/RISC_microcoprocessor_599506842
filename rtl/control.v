@@ -3,8 +3,8 @@ module control(
     input [15:0] instr,
     output reg memRead,
     output reg memWrite,
-    output reg memToReg,
-    output reg regToReg,
+    output reg aluToReg,
+    output reg constToReg,
     output reg aluEn,
     output reg halt,
     output reg S2Imm,
@@ -18,8 +18,8 @@ always @(*) begin
 
     memRead = 0;
     memWrite = 0;
-    memToReg = 0;
-    regToReg = 0;
+    aluToReg = 1;
+    constToReg = 0;
     aluEn = 1;
     halt = 0;
     S2Imm = 0;
@@ -58,7 +58,7 @@ always @(*) begin
     case(instr[15:11])    // memory instructions
         5'b0100_0: begin    // LOAD op0 op1
                        memRead = 1;
-                       memToReg = 1;
+                       aluToReg = 0;
                        aluEn = 0;
                        regWrite = 1;
                        op0 = instr[10:8];    // op0
@@ -74,8 +74,8 @@ always @(*) begin
                        op2 = instr[2:0];    // op1
                    end
         5'b0101_0: begin    // LOADC op0 const
-                       memToReg = 1;
-                       regToReg = 1;
+                       aluToReg = 0;
+                       constToReg = 1;
                        aluEn = 0;
                        regWrite = 1;
                        op0 = instr[10:8];
