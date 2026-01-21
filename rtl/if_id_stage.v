@@ -6,9 +6,9 @@ module if_id_stage #(
 )(
     input      clk,
     input      [pc_width-1 : 0] pc_curr_if,
-    output reg [pc_width-1 : 0] pc_curr_id
+    output reg [pc_width-1 : 0] pc_curr_id,
     input      [instr_width-1 : 0] instr_if,
-    output reg [instr_width-1 : 0] instr_id,
+    output reg [instr_width-1 : 0] instr_id
 );
 
 always @(posedge clk) begin
