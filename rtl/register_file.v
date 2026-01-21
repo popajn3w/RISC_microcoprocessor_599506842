@@ -10,9 +10,9 @@ module register_file #(
     input [index_width-1 : 0] op0,    // R[op0]=Rd
     input [index_width-1 : 0] op1,    // R[op1]=s1
     input [index_width-1 : 0] op2,    // R[op2]=s2
-    input      [reg_width-1 : 0] D,
-    output reg [reg_width-1 : 0] S1,
-    output reg [reg_width-1 : 0] S2
+    input  [reg_width-1 : 0] D,
+    output [reg_width-1 : 0] S1,
+    output [reg_width-1 : 0] S2
 );
 
 reg [reg_width-1 : 0] regs [0 : (1<<index_width)-1];
