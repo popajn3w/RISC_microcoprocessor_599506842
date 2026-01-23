@@ -8,6 +8,7 @@ module id_ex_stage #(
     parameter reg_width = 32
 )(
     input      clk,
+    input      rstn,
     input      [pc_width-1 : 0] pc_curr_id,
     output reg [pc_width-1 : 0] pc_curr_ex,
     input      [func_width-1 : 0] func_id,
@@ -37,7 +38,7 @@ module id_ex_stage #(
 );
 
 always @(posedge clk) begin
-    pc_curr_ex    <= pc_curr_id;
+    pc_curr_ex    <= (rstn) ? pc_curr_id : 1;
     func_ex       <= func_id;
     const_ex      <= const_id;
     memRead_ex    <= memRead_id;

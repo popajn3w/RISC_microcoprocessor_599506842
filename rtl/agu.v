@@ -4,7 +4,8 @@
 module agu #(
     parameter pc_width = 10,
     parameter addr_width = 16,
-    parameter data_width = 32
+    parameter data_width = 32,
+    parameter pc_step = 1
 )(
     input halt,
     input en,
@@ -38,7 +39,7 @@ always @(*) begin
                                 3'b010: flag = S1==0;
                                 3'b011: flag = S1!=0;
                             endcase
-                            pc_out = flag ? S2 : pc_in+1;
+                            pc_out = flag ? S2 : pc_in + pc_step;
                         end
                 3'b011: begin        // JMPRcond op1 op2
                             case(func[2:0])
@@ -47,10 +48,10 @@ always @(*) begin
                                 3'b010: flag = S1==0;
                                 3'b011: flag = S1!=0;
                             endcase
-                            pc_out = flag ? pc_in+offset : pc_in+1;
-                            //pc_out = flag ? $signed(pc_in) + $signed(const) : pc_in+1;
+                            pc_out = flag ? pc_in+offset : pc_in + pc_step;
+                            //pc_out = flag ? $signed(pc_in) + $signed(const) : pc_in + pc_step;
                         end
-                default: pc_out = pc_in +1;
+                default: pc_out = pc_in + pc_step;
             endcase
 
             addr = 0;
@@ -65,7 +66,7 @@ always @(*) begin
             endcase
         end
         else
-            pc_out = pc_in + 1;
+            pc_out = pc_in + pc_step;
     end
     else
         pc_out = pc_in;

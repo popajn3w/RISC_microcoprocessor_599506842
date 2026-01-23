@@ -5,6 +5,7 @@ module if_id_stage #(
     parameter instr_width = 16
 )(
     input      clk,
+    input      rstn,
     input      [pc_width-1 : 0] pc_curr_if,
     output reg [pc_width-1 : 0] pc_curr_id,
     input      [instr_width-1 : 0] instr_if,
@@ -12,7 +13,7 @@ module if_id_stage #(
 );
 
 always @(posedge clk) begin
-    pc_curr_id <= pc_curr_if;
+    pc_curr_id <= (rstn) ? pc_curr_if : 2;
     instr_id <= instr_if;
 end
 

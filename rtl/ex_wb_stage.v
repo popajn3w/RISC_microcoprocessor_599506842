@@ -8,6 +8,7 @@ module ex_wb_stage #(
     parameter data_width = 32
 )(
     input      clk,
+    input      rstn,
     input      [pc_width-1 : 0] pc_next_ex,
     output reg [pc_width-1 : 0] pc_next_wb,
     input      memRead_ex,
@@ -31,7 +32,7 @@ module ex_wb_stage #(
 );
 
 always @(posedge clk) begin
-    pc_next_wb    <= pc_next_ex;
+    pc_next_wb    <= (rstn) ? pc_next_ex : 4;
     memRead_wb    <= memRead_ex;
     memWrite_wb   <= memWrite_ex;
     aluToReg_wb   <= aluToReg_ex;

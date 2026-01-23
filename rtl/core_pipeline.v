@@ -63,6 +63,7 @@ wb_if_stage #(
     .pc_width(`IA_BITS)
 )wb_if_stage0(
     .clk(clk),
+    .rstn(rstn),
     .pc_wb(pc_next_wb),
     .pc_if(pc_curr_if)    // the "base" PC register
 );
@@ -80,6 +81,7 @@ if_id_stage #(
     .instr_width(`I_BITS)
 )if_id_stage0(
     .clk(clk),
+    .rstn(rstn),
     .pc_curr_if(pc_curr_if),
     .pc_curr_id(pc_curr_id),
     .instr_if(instr_if),
@@ -134,6 +136,7 @@ id_ex_stage #(
     .reg_width(`D_BITS)
 )id_ex_stage0(
     .clk(clk),
+    .rstn(rstn),
     .pc_curr_id(pc_curr_id),
     .pc_curr_ex(pc_curr_ex),
     .func_id(instr_id[14:9]),
@@ -165,7 +168,8 @@ id_ex_stage #(
 agu #(    // EX stage
     .pc_width(`IA_BITS),
     .addr_width(`A_BITS),
-    .data_width(`D_BITS)
+    .data_width(`D_BITS),
+    .pc_step(4)
 )agu0(
     .halt(halt_ex),
     .en(~aluEn_ex),
@@ -197,6 +201,7 @@ ex_wb_stage #(
     .data_width(`D_BITS)
 )ex_wb_stage0(
     .clk(clk),
+    .rstn(rstn),
     .pc_next_ex(pc_next_ex),
     .pc_next_wb(pc_next_wb),
     .memRead_ex(memRead_ex),

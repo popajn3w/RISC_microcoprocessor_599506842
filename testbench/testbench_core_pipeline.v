@@ -50,7 +50,7 @@ initial begin
     dut.rom0.memory[5] = {`NOP};
     dut.rom0.memory[6] = {`NOP};
     dut.rom0.memory[7] = {`NOP};
-    dut.rom0.memory[8] = {`SUB,`R3,`R4,`R5};
+    dut.rom0.memory[8] = {`SUB,`R3,`R5,`R4};
     dut.rom0.memory[9] = {`NOP};
     dut.rom0.memory[10] = {`NOP};
     dut.rom0.memory[11] = {`NOP};
@@ -63,6 +63,8 @@ initial begin
     dut.rom0.memory[18] = {`NOP};
     dut.rom0.memory[19] = {`NOP};
     // }
+
+    #47 rstn = 1;
 
     dut.register_file0.regs[`R0] = 1;
     dut.register_file0.regs[`R1] = 2;
@@ -78,8 +80,6 @@ initial begin
 //    dut.rom.memory[102] = ;
 //    dut.rom.memory[103] = ;
 //    dut.rom.memory[104] = ;
-
-    #47 rstn = 1;
 
     #198
     dut.rom0.memory[5] = {`XOR,`R3,`R4,`R5};

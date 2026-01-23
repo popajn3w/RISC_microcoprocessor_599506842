@@ -115,11 +115,11 @@ always @(*) begin
     endcase
 
     case(instr)
-        32'b0111_0010_0000_0000_0000_0000_0000_0000: aluEn= 0;    // NOP
-        32'b0111_0011_1111_1111_1111_1111_1111_1111: begin
-                                                         aluEn= 0;
-                                                         halt = 1;    // HALT
-                                                     end
+        16'b0111_0011_1111_1111: aluEn= 0;    // NOP
+        16'b0111_0010_0000_0000: begin
+                                     aluEn= 0;
+                                     halt = 1;    // HALT
+                                 end
     endcase
 end
 
