@@ -32,16 +32,16 @@ module ex_wb_stage #(
 );
 
 always @(posedge clk) begin
-    pc_next_wb    <= (rstn) ? pc_next_ex : 4;
-    memRead_wb    <= memRead_ex;
-    memWrite_wb   <= memWrite_ex;
-    aluToReg_wb   <= aluToReg_ex;
-    constToReg_wb <= constToReg_ex;
-    regWrite_wb   <= regWrite_ex;
-    op0_wb        <= op0_ex;
-    resAlu_wb     <= resAlu_ex;
-    addrRam_wb    <= addrRam_ex;
-    wr_dataRam_wb <= wr_dataRam_ex;
+    pc_next_wb    <= (rstn) ? pc_next_ex    : 4;
+    memRead_wb    <= (rstn) ? memRead_ex    : 0;
+    memWrite_wb   <= (rstn) ? memWrite_ex   : 0;
+    aluToReg_wb   <= (rstn) ? aluToReg_ex   : 1;
+    constToReg_wb <= (rstn) ? constToReg_ex : 0;
+    regWrite_wb   <= (rstn) ? regWrite_ex   : 0;
+    op0_wb        <= (rstn) ? op0_ex        : 0;
+    resAlu_wb     <= (rstn) ? resAlu_ex     : 0;
+    addrRam_wb    <= (rstn) ? addrRam_ex    : 0;
+    wr_dataRam_wb <= (rstn) ? wr_dataRam_ex : 0;
 end
 
 endmodule

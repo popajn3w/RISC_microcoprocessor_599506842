@@ -37,20 +37,21 @@ module id_ex_stage #(
     output reg [reg_width-1 : 0] S2_ex
 );
 
+// if (jmp||rst) NOP → regWrite = memWrite = 0;
 always @(posedge clk) begin
-    pc_curr_ex    <= (rstn) ? pc_curr_id : 1;
-    func_ex       <= func_id;
-    const_ex      <= const_id;
-    memRead_ex    <= memRead_id;
-    memWrite_ex   <= memWrite_id;
-    aluToReg_ex   <= aluToReg_id;
-    constToReg_ex <= constToReg_id;
-    aluEn_ex      <= aluEn_id;
-    halt_ex       <= halt_id;
-    regWrite_ex   <= regWrite_id;
-    op0_ex        <= op0_id;
-    S1_ex         <= S1_id;
-    S2_ex         <= S2_id;
+    pc_curr_ex    <= (rstn) ? pc_curr_id    : 1;
+    func_ex       <= (rstn) ? func_id       : 6'b11_1001;
+    const_ex      <= (rstn) ? const_id      : 8'b1111_1111;
+    memRead_ex    <= (rstn) ? memRead_id    : 0;
+    memWrite_ex   <= (rstn) ? memWrite_id   : 0;
+    aluToReg_ex   <= (rstn) ? aluToReg_id   : 1;
+    constToReg_ex <= (rstn) ? constToReg_id : 0;
+    aluEn_ex      <= (rstn) ? aluEn_id      : 0;
+    halt_ex       <= (rstn) ? halt_id       : 0;
+    regWrite_ex   <= (rstn) ? regWrite_id   : 0;
+    op0_ex        <= (rstn) ? op0_id        : 0;
+    S1_ex         <= (rstn) ? S1_id         : 0;
+    S2_ex         <= (rstn) ? S2_id         : 0;
 end
 
 endmodule
