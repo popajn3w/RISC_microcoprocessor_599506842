@@ -4,17 +4,19 @@
 // designed dependent to bus widths
 module core (
     input rstn,
-    input clk
+    input clk,
+    input [`I_BITS-1 : 0] instr,
+    output wire [`IA_BITS-1 : 0] pc_curr,
+    output wire memRead,
+    output wire memWrite,
+    output wire [`A_BITS-1 : 0] addrRam,
+    output wire [`D_BITS-1 : 0] wr_dataRam,
+    output wire [`D_BITS-1 : 0] dataRam
 );
 
 
-
-wire [`IA_BITS-1 : 0] pc_curr;
 wire [`IA_BITS-1 : 0] pc_next;
-wire [`I_BITS-1 : 0] instr;
 
-wire memRead;
-wire memWrite;
 wire aluToReg;
 wire constToReg;
 wire aluEn;
@@ -29,27 +31,16 @@ wire [`D_BITS-1 : 0] S2reg;
 wire [`D_BITS-1 : 0] S2;
 wire [`D_BITS-1 : 0] resAlu;
 
-wire [`A_BITS-1 : 0] addrRam;
-wire [`D_BITS-1 : 0] wr_dataRam;
-wire [`D_BITS-1 : 0] dataRam;
 wire [`D_BITS-1 : 0] resMem;
-
 
 
 pc #(
     .pc_width(`IA_BITS)
 )pc0(
+    .rstn(rstn),
     .clk(clk),
     .pc_in(pc_next),
     .pc_out(pc_curr)
-);
-
-rom #(
-    .pc_width(`IA_BITS),
-    .instr_width(`I_BITS)
-)rom0(
-    .addr(pc_curr),
-    .data(instr)
 );
 
 control control0(
@@ -117,18 +108,6 @@ agu #(
     .pc_out(pc_next),
     .addr(addrRam),
     .wr_data(wr_dataRam)
-);
-
-sram #(
-    .addr_width(`A_BITS),
-    .data_width(`D_BITS)
-)sram0(
-    .en(memRead),
-    .clk(clk),
-    .we(memWrite),
-    .addr(addrRam),
-    .wr_data(wr_dataRam),
-    .data(dataRam)
 );
 
 mux2 #(

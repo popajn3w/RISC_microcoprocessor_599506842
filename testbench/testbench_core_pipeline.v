@@ -7,7 +7,7 @@ module testbench_core_pipeline();
 reg rstn;
 reg clk;
 
-core_pipeline dut(
+top_core_pipeline dut(
     .rstn(rstn),
     .clk(clk)
 );
@@ -66,14 +66,14 @@ initial begin
 
     #47 rstn = 1;
 
-    dut.register_file0.regs[`R0] = 1;
-    dut.register_file0.regs[`R1] = 2;
-    dut.register_file0.regs[`R2] = 3;
-    dut.register_file0.regs[`R3] = 4;
-    dut.register_file0.regs[`R4] = 32'b0110_0110_0110_0110_0110_0110_0110_0110;
-    dut.register_file0.regs[`R5] = 32'b0111_1110_0110_1110_0111_0110_1110_1110;
-    dut.register_file0.regs[`R6] = 600;
-    dut.register_file0.regs[`R7] = 100;
+    dut.core_pipeline0.register_file0.regs[`R0] = 1;
+    dut.core_pipeline0.register_file0.regs[`R1] = 2;
+    dut.core_pipeline0.register_file0.regs[`R2] = 3;
+    dut.core_pipeline0.register_file0.regs[`R3] = 4;
+    dut.core_pipeline0.register_file0.regs[`R4] = 32'b0110_0110_0110_0110_0110_0110_0110_0110;
+    dut.core_pipeline0.register_file0.regs[`R5] = 32'b0111_1110_0110_1110_0111_0110_1110_1110;
+    dut.core_pipeline0.register_file0.regs[`R6] = 600;
+    dut.core_pipeline0.register_file0.regs[`R7] = 100;
 
 //    dut.rom.memory[100] = ;
 //    dut.rom.memory[101] = ;

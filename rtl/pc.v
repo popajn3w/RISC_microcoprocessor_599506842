@@ -5,12 +5,13 @@
 module pc #(
     parameter pc_width = 10
 )(
+    input rstn,
     input clk,
     input [pc_width-1 : 0] pc_in,
     output reg [pc_width-1 : 0] pc_out
 );
 
 always @(posedge clk)
-    pc_out <= pc_in;
+    pc_out <= rstn ? pc_in : 0;
 
 endmodule

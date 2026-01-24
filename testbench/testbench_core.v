@@ -6,7 +6,7 @@ module testbench_core();
 reg rstn;
 reg clk;
 
-core dut(
+top_core dut(
     .rstn(rstn),
     .clk(clk)
 );
@@ -14,15 +14,14 @@ core dut(
 
 initial begin
     clk = 0;
-    #10;  clk = 0;  clk = 1;
     forever begin
         #5 clk = ~clk;
     end
 end
 
 initial begin
-    #1
-    dut.pc0.pc_out = 0;
+    #1 rstn = 0;
+    #11 rstn = 1;
 
     dut.sram0.memory[0] = 0;
     dut.sram0.memory[1] = 10;
@@ -40,14 +39,14 @@ initial begin
     dut.rom0.memory[3] = {`AND,`R3,`R4,`R5};
     dut.rom0.memory[4] = {`OR,`R3,`R4,`R5};
 
-    dut.registers0.regs[`R0] = 1;
-    dut.registers0.regs[`R1] = 2;
-    dut.registers0.regs[`R2] = 3;
-    dut.registers0.regs[`R3] = 4;
-    dut.registers0.regs[`R4] = 32'b0110_0110_0110_0110_0110_0110_0110_0110;
-    dut.registers0.regs[`R5] = 32'b0111_1110_0110_1110_0111_0110_1110_1110;
-    dut.registers0.regs[`R6] = 600;
-    dut.registers0.regs[`R7] = 100;
+    dut.core0.registers0.regs[`R0] = 1;
+    dut.core0.registers0.regs[`R1] = 2;
+    dut.core0.registers0.regs[`R2] = 3;
+    dut.core0.registers0.regs[`R3] = 4;
+    dut.core0.registers0.regs[`R4] = 32'b0110_0110_0110_0110_0110_0110_0110_0110;
+    dut.core0.registers0.regs[`R5] = 32'b0111_1110_0110_1110_0111_0110_1110_1110;
+    dut.core0.registers0.regs[`R6] = 600;
+    dut.core0.registers0.regs[`R7] = 100;
 
 //    dut.rom.memory[100] = ;
 //    dut.rom.memory[101] = ;

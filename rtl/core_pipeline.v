@@ -3,25 +3,28 @@
 
 module core_pipeline(
     input rstn,
-    input clk
+    input clk,
+    output wire [`IA_BITS-1 : 0] pc_curr_if,
+    input wire [`I_BITS-1 : 0] instr_if,
+    output wire memRead_wb,
+    output wire memWrite_wb,
+    output wire [`A_BITS-1 : 0] addrRam_wb,
+    output wire [`D_BITS-1 : 0] wr_dataRam_wb,
+    input wire [`D_BITS-1 : 0] dataRam_wb
 );
 
-wire [`IA_BITS-1 : 0] pc_curr_if;
 wire [`IA_BITS-1 : 0] pc_curr_id;
 wire [`IA_BITS-1 : 0] pc_curr_ex;
 wire [`IA_BITS-1 : 0] pc_next_ex;
 wire [`IA_BITS-1 : 0] pc_next_wb;
-wire [`I_BITS-1 : 0] instr_if;
 wire [`I_BITS-1 : 0] instr_id;
 wire [7:0] const_ex;
 wire [5:0] func_ex;
 
 wire memRead_id;
 wire memRead_ex;
-wire memRead_wb;
 wire memWrite_id;
 wire memWrite_ex;
-wire memWrite_wb;
 wire aluToReg_id;
 wire aluToReg_ex;
 wire aluToReg_wb;
@@ -52,10 +55,7 @@ wire [`D_BITS-1 : 0] resAlu_ex;
 wire [`D_BITS-1 : 0] resAlu_wb;
 
 wire [`A_BITS-1 : 0] addrRam_ex;
-wire [`A_BITS-1 : 0] addrRam_wb;
 wire [`D_BITS-1 : 0] wr_dataRam_ex;
-wire [`D_BITS-1 : 0] wr_dataRam_wb;
-wire [`D_BITS-1 : 0] dataRam_wb;
 wire [`D_BITS-1 : 0] resMem_wb;
 
 
@@ -66,14 +66,6 @@ wb_if_stage #(
     .rstn(rstn),
     .pc_wb(pc_next_wb),
     .pc_if(pc_curr_if)    // the "base" PC register
-);
-
-rom #(    // IF stage
-    .pc_width(`IA_BITS),
-    .instr_width(`I_BITS)
-)rom0(
-    .addr(pc_curr_if),
-    .data(instr_if)
 );
 
 if_id_stage #(
@@ -222,18 +214,6 @@ ex_wb_stage #(
     .addrRam_wb(addrRam_wb),
     .wr_dataRam_ex(wr_dataRam_ex),
     .wr_dataRam_wb(wr_dataRam_wb)
-);
-
-sram #(    // WB stage: read;  WB/IF stage: write
-    .addr_width(`A_BITS),
-    .data_width(`D_BITS)
-)sram0(
-    .en(memRead_wb),
-    .clk(clk),
-    .we(memWrite_wb),
-    .addr(addrRam_wb),
-    .wr_data(wr_dataRam_wb),
-    .data(dataRam_wb)
 );
 
 mux2 #(    // WB stage
