@@ -5,11 +5,11 @@ module core_pipeline(
     input rstn,
     input clk,
     output wire [`IA_BITS-1 : 0] pc_curr_if,
-    input wire [`I_BITS-1 : 0] instr_if,
-    output wire memRead_wb,
-    output wire memWrite_wb,
-    output wire [`A_BITS-1 : 0] addrRam_wb,
-    output wire [`D_BITS-1 : 0] wr_dataRam_wb,
+    input wire [`I_BITS-1 : 0] instr_rom_id,
+    output wire memRead_ex,
+    output wire memWrite_ex,
+    output wire [`A_BITS-1 : 0] addrRam_ex,
+    output wire [`D_BITS-1 : 0] wr_dataRam_ex,
     input wire [`D_BITS-1 : 0] dataRam_wb
 );
 
@@ -56,6 +56,7 @@ wire [`D_BITS-1 : 0] resAlu_wb;
 
 wire [`A_BITS-1 : 0] addrRam_ex;
 wire [`D_BITS-1 : 0] wr_dataRam_ex;
+wire [        7 : 0] dataConst_wb;
 wire [`D_BITS-1 : 0] resMem_wb;
 
 
@@ -68,6 +69,8 @@ wb_if_stage #(
     .pc_if(pc_curr_if)    // the "base" PC register
 );
 
+assign instr_id = (rstn) ? instr_rom_id : `NOP;
+
 if_id_stage #(
     .pc_width(`IA_BITS),
     .instr_width(`I_BITS)
@@ -75,9 +78,7 @@ if_id_stage #(
     .clk(clk),
     .rstn(rstn),
     .pc_curr_if(pc_curr_if),
-    .pc_curr_id(pc_curr_id),
-    .instr_if(instr_if),
-    .instr_id(instr_id)
+    .pc_curr_id(pc_curr_id)
 );
 
 control control0(    // ID stage
@@ -188,18 +189,12 @@ alu #(
 ex_wb_stage #(
     .pc_width(`IA_BITS),
     .index_width(3),
-    .reg_width(`D_BITS),
-    .addr_width(`A_BITS),
-    .data_width(`D_BITS)
+    .reg_width(`D_BITS)
 )ex_wb_stage0(
     .clk(clk),
     .rstn(rstn),
     .pc_next_ex(pc_next_ex),
     .pc_next_wb(pc_next_wb),
-    .memRead_ex(memRead_ex),
-    .memRead_wb(memRead_wb),
-    .memWrite_ex(memWrite_ex),
-    .memWrite_wb(memWrite_wb),
     .aluToReg_ex(aluToReg_ex),
     .aluToReg_wb(aluToReg_wb),
     .constToReg_ex(constToReg_ex),
@@ -210,17 +205,16 @@ ex_wb_stage #(
     .op0_wb(op0_wb),
     .resAlu_ex(resAlu_ex),
     .resAlu_wb(resAlu_wb),
-    .addrRam_ex(addrRam_ex),
-    .addrRam_wb(addrRam_wb),
-    .wr_dataRam_ex(wr_dataRam_ex),
-    .wr_dataRam_wb(wr_dataRam_wb)
+    .dataConst_ex(wr_dataRam_ex[7:0]),
+    .dataConst_wb(dataConst_wb)
 );
 
-mux2 #(    // WB stage
-    .data_width(`D_BITS)
-)mux2_1(
+mux2hetero #(    // WB stage
+    .data_width_in0out(`D_BITS),
+    .data_width_in1(8)
+)mux2hetero_1(
     .in0(dataRam_wb),
-    .in1(wr_dataRam_wb),
+    .in1(dataConst_wb),
     .sel(constToReg_wb),
     .out(resMem_wb)
 );

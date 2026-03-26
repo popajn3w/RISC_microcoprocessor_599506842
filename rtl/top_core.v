@@ -26,18 +26,19 @@ core core0(
     .dataRam(dataRam)
 );
 
-rom #(
+rom_aread #(
     .pc_width(`IA_BITS),
     .instr_width(`I_BITS)
-)rom0(
+)rom_aread0(
+    .clk(clk),
     .addr(pc_curr),
     .data(instr)
 );
 
-sram #(
+sram_aread #(
     .addr_width(`A_BITS),
     .data_width(`D_BITS)
-)sram0(
+)sram_aread0(
     .en(memRead),
     .clk(clk),
     .we(memWrite),

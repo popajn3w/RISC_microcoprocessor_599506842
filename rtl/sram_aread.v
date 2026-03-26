@@ -1,8 +1,7 @@
 `include "defs.vh"
-`include "timescale.vh"
 
-// sequential posedge read+write → BRAM
-module sram #(
+// sequential posedge write + comb read → distributed RAM
+module sram_aread #(
     parameter addr_width = 16,
     parameter data_width = 32
 )(
@@ -11,18 +10,17 @@ module sram #(
     input we,
     input [addr_width-1 : 0] addr,
     input [data_width-1 : 0] wr_data,
-    output reg [data_width-1 : 0] data
+    output [data_width-1 : 0] data
 );
 
 reg [data_width-1 : 0] memory [0 : (1<<addr_width)-1];
 
 always @(posedge clk) begin
-    if(en) begin
+    if(en)
         if(we)
             memory[addr] <= wr_data;
-        data <= memory[addr];
-    end
 end
 
+assign data = memory[addr];
 
 endmodule
