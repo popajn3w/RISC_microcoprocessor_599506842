@@ -9,6 +9,10 @@ module id_ex_stage #(
 )(
     input      clk,
     input      rstn,
+    input      isJmp,
+    input      [pc_width-1 : 0] pc_next,
+    input      isPipeLoading_id,
+    output reg isPipeLoading_ex,
     input      [pc_width-1 : 0] pc_curr_id,
     output reg [pc_width-1 : 0] pc_curr_ex,
     input      [func_width-1 : 0] func_id,
@@ -39,19 +43,21 @@ module id_ex_stage #(
 
 // if (jmp||rst) NOP → regWrite = memWrite = 0;
 always @(posedge clk) begin
-    pc_curr_ex    <= (rstn) ? pc_curr_id    : 1;
-    func_ex       <= (rstn) ? func_id       : 6'b11_1001;
-    const_ex      <= (rstn) ? const_id      : 8'b1111_1111;
-    memRead_ex    <= (rstn) ? memRead_id    : 0;
-    memWrite_ex   <= (rstn) ? memWrite_id   : 0;
-    aluToReg_ex   <= (rstn) ? aluToReg_id   : 1;
-    constToReg_ex <= (rstn) ? constToReg_id : 0;
-    aluEn_ex      <= (rstn) ? aluEn_id      : 0;
-    halt_ex       <= (rstn) ? halt_id       : 0;
-    regWrite_ex   <= (rstn) ? regWrite_id   : 0;
-    op0_ex        <= (rstn) ? op0_id        : 0;
-    S1_ex         <= (rstn) ? S1_id         : 0;
-    S2_ex         <= (rstn) ? S2_id         : 0;
+    pc_curr_ex       <= rstn ? (isJmp ? pc_next + 2
+                                      : pc_curr_id) : 2;
+    isPipeLoading_ex <= !rstn||isJmp||isPipeLoading_id;
+    func_ex          <= (rstn&&!isJmp) ? func_id       : 6'b11_1001;
+    const_ex         <= (rstn&&!isJmp) ? const_id      : 8'b1111_1111;
+    memRead_ex       <= (rstn&&!isJmp) ? memRead_id    : 0;
+    memWrite_ex      <= (rstn&&!isJmp) ? memWrite_id   : 0;
+    aluToReg_ex      <= (rstn&&!isJmp) ? aluToReg_id   : 1;
+    constToReg_ex    <= (rstn&&!isJmp) ? constToReg_id : 0;
+    aluEn_ex         <= (rstn&&!isJmp) ? aluEn_id      : 0;
+    halt_ex          <= (rstn&&!isJmp) ? halt_id       : 0;
+    regWrite_ex      <= (rstn&&!isJmp) ? regWrite_id   : 0;
+    op0_ex           <= (rstn&&!isJmp) ? op0_id        : 0;
+    S1_ex            <= (rstn&&!isJmp) ? S1_id         : 0;
+    S2_ex            <= (rstn&&!isJmp) ? S2_id         : 0;
 end
 
 endmodule

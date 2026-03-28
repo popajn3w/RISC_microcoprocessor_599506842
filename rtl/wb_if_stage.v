@@ -10,6 +10,6 @@ module wb_if_stage #(
 );
 
 always @(posedge clk)
-    pc_if <= (rstn) ? pc_wb : 3;
+    pc_if <= (rstn) ? pc_wb : 0;
 
 endmodule

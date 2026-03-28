@@ -9,17 +9,23 @@ module agu #(
 )(
     input halt,
     input en,
+    input isPipeLoading,
     input [5:0] func,
     input [pc_width-1 : 0] pc_in,
     input [data_width-1 : 0] S1,
     input [data_width-1 : 0] S2,
     input [7:0] const,
+    output reg isJmp,
     output reg [pc_width-1 : 0] pc_out,
     output reg [addr_width-1 : 0] addr,
     output reg [data_width-1 : 0] wr_data
 );
 
+wire [pc_width-1 : 0] offset;
+reg flag;
+
 always @(*) begin
+    isJmp = 0;
     addr = 0;
     wr_data = 0;
     flag = 0;
@@ -28,7 +34,7 @@ always @(*) begin
         if(en) begin
             /// !! to avoid latching combinational case blocks, make sure all
             /// outputs are written for each iteration !!
-            flag = 0;
+            isJmp = 1;
             case(func[5:3])        // jump instructions + PC incrementing
                 3'b000: pc_out = S1;    // JMP op1
                 3'b001: pc_out = pc_in + offset;    // JMPR #offset
@@ -40,6 +46,7 @@ always @(*) begin
                                 3'b011: flag = S1!=0;
                             endcase
                             pc_out = flag ? S2 : pc_in + pc_step;
+                            isJmp  = flag;
                         end
                 3'b011: begin        // JMPRcond op1 op2
                             case(func[2:0])
@@ -50,8 +57,12 @@ always @(*) begin
                             endcase
                             pc_out = flag ? pc_in+offset : pc_in + pc_step;
                             //pc_out = flag ? $signed(pc_in) + $signed(const) : pc_in + pc_step;
+                            isJmp  = flag;
                         end
-                default: pc_out = pc_in + pc_step;
+                default: begin    // when isPipeLoading, propagate the preloaded PC values
+                    pc_out = isPipeLoading  ?  pc_in  :  pc_in + pc_step;
+                    isJmp  = 0;
+                end
             endcase
 
             addr = 0;
@@ -66,14 +77,13 @@ always @(*) begin
             endcase
         end
         else
-            pc_out = pc_in + pc_step;
+            pc_out = isPipeLoading  ?  pc_in  :  pc_in + pc_step;
     end
-    else
+    else begin
         pc_out = pc_in;
+        isJmp  = 1;
+    end
 end
-
-wire [pc_width-1 : 0] offset;
-reg flag;
 
 sign_extend #(
     .in_width(6),

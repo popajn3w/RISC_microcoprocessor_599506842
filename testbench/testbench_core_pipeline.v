@@ -42,7 +42,7 @@ initial begin
     //dut.rom0.memory[3] = {`AND,`R3,`R4,`R5};
     //dut.rom0.memory[4] = {`OR,`R3,`R4,`R5};
 
-    dut.rom0.memory[0] = {`NOP};
+    dut.rom0.memory[0] = {`SUB,`R0,`R5,`R1};
     dut.rom0.memory[1] = {`NOP};
     dut.rom0.memory[2] = {`NOP};
     dut.rom0.memory[3] = {`NOP};
@@ -73,7 +73,7 @@ initial begin
     dut.core_pipeline0.register_file0.regs[`R4] = 32'b0110_0110_0110_0110_0110_0110_0110_0110;
     dut.core_pipeline0.register_file0.regs[`R5] = 32'b0111_1110_0110_1110_0111_0110_1110_1110;
     dut.core_pipeline0.register_file0.regs[`R6] = 600;
-    dut.core_pipeline0.register_file0.regs[`R7] = 100;
+    //dut.core_pipeline0.register_file0.regs[`R7] = 0;
 
 //    dut.rom.memory[100] = ;
 //    dut.rom.memory[101] = ;
@@ -81,27 +81,42 @@ initial begin
 //    dut.rom.memory[103] = ;
 //    dut.rom.memory[104] = ;
 
-    #198
-    dut.rom0.memory[5] = {`XOR,`R3,`R4,`R5};
-    dut.rom0.memory[6] = {`NXOR,`R3,`R4,`R5};
-    dut.rom0.memory[7] = {`SHIFTL,`R2,6'd0};
-    dut.rom0.memory[8] = {`SHIFTL,`R2,6'd2};
-    dut.rom0.memory[9] = {`SHIFTR,`R2,6'd2};
+    #200
+    dut.rom0.memory[20] = {`XOR,`R3,`R4,`R5};
+    dut.rom0.memory[21] = {`NOP};
+    dut.rom0.memory[22] = {`NOP};
+    dut.rom0.memory[23] = {`NOP};
+    dut.rom0.memory[24] = {`NXOR,`R3,`R4,`R5};
+    dut.rom0.memory[25] = {`NOP};
+    dut.rom0.memory[26] = {`NOP};
+    dut.rom0.memory[27] = {`NOP};
+    dut.rom0.memory[28] = {`SHIFTL,`R2,6'd0};
+    dut.rom0.memory[29] = {`NOP};
+    dut.rom0.memory[30] = {`NOP};
+    dut.rom0.memory[31] = {`NOP};
+    dut.rom0.memory[32] = {`SHIFTL,`R2,6'd2};
+    dut.rom0.memory[33] = {`NOP};
+    dut.rom0.memory[34] = {`NOP};
+    dut.rom0.memory[35] = {`NOP};
+    dut.rom0.memory[36] = {`SHIFTR,`R2,6'd2};
+    dut.rom0.memory[37] = {`NOP};
+    dut.rom0.memory[38] = {`NOP};
+    dut.rom0.memory[39] = {`NOP};
 
-    #50
-    dut.rom0.memory[10] = {`LOAD,`R0,5'b0,`R6};
-    dut.rom0.memory[11] = {`OR,`R2,`R2,`R0};
-    dut.rom0.memory[12] = {`SHIFTRA,`R2,6'd1};
-    dut.rom0.memory[13] = {`SHIFTRA,`R2,6'd28};
-    dut.rom0.memory[14] = {`LOADC,`R6,8'd200};
+    #200
+    dut.rom0.memory[40] = {`LOAD,`R0,5'b0,`R6};
+    dut.rom0.memory[41] = {`OR,`R2,`R2,`R0};
+    dut.rom0.memory[42] = {`SHIFTRA,`R2,6'd1};
+    dut.rom0.memory[43] = {`SHIFTRA,`R2,6'd28};
+    dut.rom0.memory[44] = {`LOADC,`R6,8'd200};
 
-    dut.rom0.memory[15] = {`STORE,`R6,5'd0,`R2};
-    dut.rom0.memory[16] = {`SHIFTR,`R0,6'd31};    // R0 = 1
-    dut.rom0.memory[17] = {`SHIFTR,`R2,6'd30};    // set R2 as counter = b11
-    dut.rom0.memory[18] = {`LOADC,`R1,8'd18};    // set R1 as return addr
-    dut.rom0.memory[19] = {`JMP,9'b0,`R7};
+    dut.rom0.memory[45] = {`STORE,`R6,5'd0,`R2};
+    dut.rom0.memory[46] = {`SHIFTR,`R0,6'd31};    // R0 = 1
+    dut.rom0.memory[47] = {`SHIFTR,`R2,6'd30};    // set R2 as counter = b11
+    dut.rom0.memory[48] = {`LOADC,`R1,8'd18};    // set R1 as return addr
+    dut.rom0.memory[49] = {`JMP,9'b0,`R7};
 
-    #50
+    #100
     dut.rom0.memory[20] = {`LOADC,`R7,8'd105};
     dut.rom0.memory[21] = {`SHIFTR,`R2,6'd30};   // set R2 as counter = b11; 380ns
     dut.rom0.memory[22] = {`JMP,9'b0,`R7};

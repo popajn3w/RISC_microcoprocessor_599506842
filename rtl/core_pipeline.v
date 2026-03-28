@@ -20,11 +20,14 @@ wire [`IA_BITS-1 : 0] pc_next_wb;
 wire [`I_BITS-1 : 0] instr_id;
 wire [7:0] const_ex;
 wire [5:0] func_ex;
+wire isPipeLoading_id;
+wire isPipeLoading_ex;
+wire isJmp_ex;
+wire isJmp_wb;
+reg rstn_seq;
 
 wire memRead_id;
-wire memRead_ex;
 wire memWrite_id;
-wire memWrite_ex;
 wire aluToReg_id;
 wire aluToReg_ex;
 wire aluToReg_wb;
@@ -54,8 +57,6 @@ wire [`D_BITS-1 : 0] S2_ex;
 wire [`D_BITS-1 : 0] resAlu_ex;
 wire [`D_BITS-1 : 0] resAlu_wb;
 
-wire [`A_BITS-1 : 0] addrRam_ex;
-wire [`D_BITS-1 : 0] wr_dataRam_ex;
 wire [        7 : 0] dataConst_wb;
 wire [`D_BITS-1 : 0] resMem_wb;
 
@@ -69,7 +70,8 @@ wb_if_stage #(
     .pc_if(pc_curr_if)    // the "base" PC register
 );
 
-assign instr_id = (rstn) ? instr_rom_id : `NOP;
+always @(posedge clk)  rstn_seq <= rstn;
+assign instr_id = (rstn_seq && !isJmp_wb) ? instr_rom_id : `NOP;
 
 if_id_stage #(
     .pc_width(`IA_BITS),
@@ -77,6 +79,9 @@ if_id_stage #(
 )if_id_stage0(
     .clk(clk),
     .rstn(rstn),
+    .isJmp(isJmp_wb),
+    .pc_next(pc_next_wb),
+    .isPipeLoading_id(isPipeLoading_id),
     .pc_curr_if(pc_curr_if),
     .pc_curr_id(pc_curr_id)
 );
@@ -130,6 +135,10 @@ id_ex_stage #(
 )id_ex_stage0(
     .clk(clk),
     .rstn(rstn),
+    .isJmp(isJmp_wb),
+    .pc_next(pc_next_wb),
+    .isPipeLoading_id(isPipeLoading_id),
+    .isPipeLoading_ex(isPipeLoading_ex),
     .pc_curr_id(pc_curr_id),
     .pc_curr_ex(pc_curr_ex),
     .func_id(instr_id[14:9]),
@@ -166,11 +175,13 @@ agu #(    // EX stage
 )agu0(
     .halt(halt_ex),
     .en(~aluEn_ex),
+    .isPipeLoading(isPipeLoading_ex),
     .func(func_ex),
     .pc_in(pc_curr_ex),
     .S1(S1_ex),
     .S2(S2_ex),
     .const(const_ex),
+    .isJmp(isJmp_ex),
     .pc_out(pc_next_ex),
     .addr(addrRam_ex),
     .wr_data(wr_dataRam_ex)
@@ -193,6 +204,8 @@ ex_wb_stage #(
 )ex_wb_stage0(
     .clk(clk),
     .rstn(rstn),
+    .isJmp_ex(isJmp_ex),
+    .isJmp_wb(isJmp_wb),
     .pc_next_ex(pc_next_ex),
     .pc_next_wb(pc_next_wb),
     .aluToReg_ex(aluToReg_ex),

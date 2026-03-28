@@ -100,6 +100,7 @@ agu #(
 )agu0(
     .halt(halt),
     .en(~aluEn),
+    .isPipeLoading(0),
     .func(instr[14:9]),
     .pc_in(pc_curr),
     .S1(S1),
