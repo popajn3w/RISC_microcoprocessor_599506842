@@ -106,37 +106,44 @@ initial begin
     #200
     dut.rom0.memory[40] = {`LOAD,`R0,5'b0,`R6};
     dut.rom0.memory[41] = {`OR,`R2,`R2,`R0};
-    dut.rom0.memory[42] = {`SHIFTRA,`R2,6'd1};
-    dut.rom0.memory[43] = {`SHIFTRA,`R2,6'd28};
-    dut.rom0.memory[44] = {`LOADC,`R6,8'd200};
+    dut.rom0.memory[42] = {`NOP};    // data hazard
+    dut.rom0.memory[43] = {`NOP};    // src in WB, dest in ID → 2 stall cycles needed
+    dut.rom0.memory[43] = {`SHIFTRA,`R2,6'd1};
+    dut.rom0.memory[44] = {`NOP};
+    dut.rom0.memory[45] = {`NOP};
+    dut.rom0.memory[46] = {`SHIFTRA,`R2,6'd28};
+    dut.rom0.memory[47] = {`LOADC,`R6,8'd200};
+    dut.rom0.memory[48] = {`NOP};    // data hazard, src in WB, dest in EX → 1 stall cycle
+    dut.rom0.memory[49] = {`STORE,`R6,5'd0,`R2};
 
-    dut.rom0.memory[45] = {`STORE,`R6,5'd0,`R2};
-    dut.rom0.memory[46] = {`SHIFTR,`R0,6'd31};    // R0 = 1
-    dut.rom0.memory[47] = {`SHIFTR,`R2,6'd30};    // set R2 as counter = b11
-    dut.rom0.memory[48] = {`LOADC,`R1,8'd18};    // set R1 as return addr
-    dut.rom0.memory[49] = {`JMP,9'b0,`R7};
+    dut.rom0.memory[50] = {`SHIFTR,`R0,6'd31};    // R0 = 1
+    dut.rom0.memory[51] = {`LOADC,`R7,8'd100};
+    dut.rom0.memory[52] = {`LOADC,`R2,8'd3};    // set R2 as index = b11
+    dut.rom0.memory[53] = {`LOADC,`R1,8'd53};    // set R1 as return addr
+    dut.rom0.memory[54] = {`JMP,9'b0,`R7};
+    dut.rom0.memory[55] = {`NOP};
 
-    #100
-    dut.rom0.memory[20] = {`LOADC,`R7,8'd105};
-    dut.rom0.memory[21] = {`SHIFTR,`R2,6'd30};   // set R2 as counter = b11; 380ns
-    dut.rom0.memory[22] = {`JMP,9'b0,`R7};
-    dut.rom0.memory[23] = {`NOP};
-    dut.rom0.memory[24] = {`NOP};
+    #150
+    dut.rom0.memory[56] = {`LOADC,`R7,8'd105};
+    dut.rom0.memory[57] = {`NOP};
+    dut.rom0.memory[58] = {`SHIFTR,`R2,6'd29};   // set R2 as index = b111;
+    dut.rom0.memory[59] = {`JMP,9'b0,`R7};
+    dut.rom0.memory[60] = {`NOP};
 
-    dut.rom0.memory[40] = {`JMPR,6'b0,-6'd20};
-    dut.rom0.memory[70] = {`JMPR,6'b0,-6'd30};
+    dut.rom0.memory[70] = {`JMPR,6'b0,-6'd14};
+    dut.rom0.memory[90] = {`JMPR,6'b0,-6'd20};
 
     dut.rom0.memory[100] = {`SUB,`R2,`R2,`R0};    // R2--
-    dut.rom0.memory[101] = {`JMPNN,`R2,3'b0,`R1};    // do while(R2>=0)
-    dut.rom0.memory[102] = {`JMPR,6'b0,-6'd32};
-    dut.rom0.memory[103] = {`NOP};
-    dut.rom0.memory[104] = {`NOP};
+    dut.rom0.memory[101] = {`NOP};
+    dut.rom0.memory[102] = {`NOP};
+    dut.rom0.memory[103] = {`JMPNN,`R2,3'b0,`R1};    // do while(R2>=0)
+    dut.rom0.memory[104] = {`JMPR,6'b0,-6'd14};
 
     dut.rom0.memory[105] = {`SUB,`R2,`R2,`R0};
-    dut.rom0.memory[106] = {`JMPRNZ,`R2,6'd4};
+    dut.rom0.memory[106] = {`NOP};
     dut.rom0.memory[107] = {`LOADC,`R7,8'd115};
-    dut.rom0.memory[108] = {`JMP,9'b0,`R7};
-    dut.rom0.memory[109] = {`NOP};
+    dut.rom0.memory[108] = {`JMPRNZ,`R2,6'd2};    // for(i=7;i!=0;i--)  ;
+    dut.rom0.memory[109] = {`JMP,9'b0,`R7};
 
     #50
     dut.rom0.memory[110] = {`JMPR,6'b0,-6'd5};
@@ -145,15 +152,27 @@ initial begin
     dut.rom0.memory[113] = {`NOP};
     dut.rom0.memory[114] = {`NOP};
 
-    dut.rom0.memory[115] = {`LOADC,`R7,8'd117};
-    dut.rom0.memory[116] = {`NOP};
-    dut.rom0.memory[117] = {`NOP};
-    dut.rom0.memory[118] = {`NOP};
-    dut.rom0.memory[119] = {`NOP};
+    //dut.rom0.memory[115] = {`HALT};
+    dut.rom0.memory[115] = {`LOADC,`R0,8'd0};    // sum
+    dut.rom0.memory[116] = {`LOADC,`R1,8'd0};    // index
+    dut.rom0.memory[117] = {`LOADC,`R3,8'd1};    // increment step
+    dut.rom0.memory[118] = {`LOADC,`R7,8'd120};
+    dut.rom0.memory[119] = {`LOADC,`R6,8'd100};    // upper bound
 
-    #500
+    dut.rom0.memory[120] = {`SUB,`R2,`R6,`R1};    // cond=100-i;
+    dut.rom0.memory[121] = {`ADD,`R0,`R0,`R1};    // sum=sum+i;
+    dut.rom0.memory[122] = {`ADD,`R1,`R1,`R3};    // i=i+1;
+    dut.rom0.memory[123] = {`JMPRNZ,`R2,-6'd3};
+    dut.rom0.memory[124] = {`HALT};    // expected sum == 5050
+    dut.rom0.memory[125] = {`NOP};
+    dut.rom0.memory[126] = {`NOP};
+    dut.rom0.memory[127] = {`NOP};
+    dut.rom0.memory[128] = {`NOP};
+    dut.rom0.memory[129] = {`NOP};
 
-    #20 $stop();
+    #1500
+
+    $stop();
 end
 
 endmodule

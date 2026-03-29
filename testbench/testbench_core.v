@@ -72,13 +72,13 @@ initial begin
 
     dut.rom_aread0.memory[15] = {`STORE,`R6,5'd0,`R2};
     dut.rom_aread0.memory[16] = {`SHIFTR,`R0,6'd31};    // R0 = 1
-    dut.rom_aread0.memory[17] = {`SHIFTR,`R2,6'd30};    // set R2 as counter = b11
+    dut.rom_aread0.memory[17] = {`SHIFTR,`R2,6'd30};    // set R2 as index = b11
     dut.rom_aread0.memory[18] = {`LOADC,`R1,8'd18};    // set R1 as return addr
     dut.rom_aread0.memory[19] = {`JMP,9'b0,`R7};
 
     #50
     dut.rom_aread0.memory[20] = {`LOADC,`R7,8'd105};
-    dut.rom_aread0.memory[21] = {`SHIFTR,`R2,6'd30};   // set R2 as counter = b11; 380ns
+    dut.rom_aread0.memory[21] = {`LOADC,`R2,8'd3};   // set R2 as index = b11; 380ns
     dut.rom_aread0.memory[22] = {`JMP,9'b0,`R7};
     dut.rom_aread0.memory[23] = {`NOP};
     dut.rom_aread0.memory[24] = {`NOP};
