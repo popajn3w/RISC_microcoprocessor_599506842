@@ -2,7 +2,8 @@
 
 module top_core_pipeline (
     input rstn,
-    input clk
+    input clk,
+    input halt_ext
 );
 
 wire [`IA_BITS-1 : 0] pc_curr_if;
@@ -17,6 +18,7 @@ wire [`D_BITS-1 : 0] dataRam_wb;
 core_pipeline core_pipeline0(
     .rstn(rstn),
     .clk(clk),
+    .halt_ext(halt_ext),
     .pc_curr_if(pc_curr_if),
     .instr_rom_id(instr_rom_id),
     .memRead_ex(memRead_ex),
@@ -31,7 +33,10 @@ rom #(    // IF/ID stage
     .instr_width(`I_BITS)
 )rom0(
     .clk(clk),
+    .we(0),
     .addr(pc_curr_if),
+    .addr2(0),
+    .wr_data(0),
     .data(instr_rom_id)
 );
 
@@ -43,6 +48,7 @@ sram #(    // EX/WB stage: read+write
     .clk(clk),
     .we(memWrite_ex),
     .addr(addrRam_ex),
+    .addr2(0),
     .wr_data(wr_dataRam_ex),
     .data(dataRam_wb)
 );

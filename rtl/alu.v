@@ -1,4 +1,3 @@
-`include "timescale.vh"
 `include "defs.vh"
 
 module alu #(

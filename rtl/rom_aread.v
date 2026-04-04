@@ -1,16 +1,25 @@
 `include "defs.vh"
-`include "timescale.vh"
 
 module rom_aread #(
     parameter pc_width = 10,
     parameter instr_width = 16
 )(
+    input clk,
+    input we,
     input [pc_width-1 : 0] addr,
-    output [instr_width-1 : 0] data
+    input [pc_width-1 : 0] addr2,
+    input [instr_width-1 : 0] wr_data,
+    output [instr_width-1 : 0] data,
+    output [instr_width-1 : 0] data2
 ); 
 
 reg [instr_width-1 : 0] memory [0 : (1<<pc_width)-1];
 
-assign data = memory[addr];
+always @(posedge clk)
+    if(we)
+        memory[addr2] <= wr_data;    // we, addr2, wr_data ext only
+
+assign data  = memory[addr ];
+assign data2 = memory[addr2];
 
 endmodule

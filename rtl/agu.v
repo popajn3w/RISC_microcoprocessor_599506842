@@ -1,5 +1,4 @@
 `include "defs.vh"
-`include "timescale.vh"
 
 module agu #(
     parameter pc_width = 10,

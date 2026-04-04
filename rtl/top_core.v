@@ -31,7 +31,10 @@ rom_aread #(
     .instr_width(`I_BITS)
 )rom_aread0(
     .clk(clk),
+    .we(0),
     .addr(pc_curr),
+    .addr2(0),
+    .wr_data(0),
     .data(instr)
 );
 
@@ -43,6 +46,7 @@ sram_aread #(
     .clk(clk),
     .we(memWrite),
     .addr(addrRam),
+    .addr2(0),
     .wr_data(wr_dataRam),
     .data(dataRam)
 );

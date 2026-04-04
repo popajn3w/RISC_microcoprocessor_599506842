@@ -6,10 +6,12 @@ module testbench_core_pipeline();
 
 reg rstn;
 reg clk;
+reg halt;
 
 top_core_pipeline dut(
     .rstn(rstn),
-    .clk(clk)
+    .clk(clk),
+    .halt_ext(halt)
 );
 
 
@@ -23,6 +25,7 @@ end
 
 initial begin
     #1 rstn = 0;
+    halt = 0;
     //dut.wb_if_stage0.pc_if = 0;
 
     dut.sram0.memory[0] = 0;
@@ -145,7 +148,6 @@ initial begin
     dut.rom0.memory[108] = {`JMPRNZ,`R2,6'd2};    // for(i=7;i!=0;i--)  ;
     dut.rom0.memory[109] = {`JMP,9'b0,`R7};
 
-    #50
     dut.rom0.memory[110] = {`JMPR,6'b0,-6'd5};
     dut.rom0.memory[111] = {`NOP};
     dut.rom0.memory[112] = {`NOP};
@@ -170,7 +172,16 @@ initial begin
     dut.rom0.memory[128] = {`NOP};
     dut.rom0.memory[129] = {`NOP};
 
-    #1500
+    #50    // 648ns
+    halt = 1;  #10 halt = 0;
+    #40    // 698ns
+    #200 halt = 1;  #74 halt = 0;
+    #30    // 1002ns
+    halt = 1;  #4 halt = 0;
+    #380   // 1386ns
+    halt = 1;  #40 halt = 0;
+    #80    // 1506ns
+    #1500    // 3006ns
 
     $stop();
 end

@@ -1,5 +1,4 @@
 `include "defs.vh"
-`include "timescale.vh"
 
 // designed dependent to bus widths
 module core (

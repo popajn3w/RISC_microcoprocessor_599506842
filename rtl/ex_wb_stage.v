@@ -7,6 +7,7 @@ module ex_wb_stage #(
 )(
     input      clk,
     input      rstn,
+    input      halt_ext,
     input      isJmp_ex,
     output reg isJmp_wb,
     input      [pc_width-1 : 0] pc_next_ex,
@@ -26,16 +27,17 @@ module ex_wb_stage #(
 );
 
 // if jmp: isJmp_ex → isJmp_wb → pc_next_wb <= pc_next_wb+1
-always @(posedge clk) begin
-    isJmp_wb      <= rstn ? (isJmp_ex&&!isJmp_wb) : 0;
-    pc_next_wb    <= rstn ? (isJmp_wb  ? pc_next_wb + 1
-                                       : pc_next_ex)   : 1;
-    aluToReg_wb   <= (rstn&&!isJmp_ex) ? aluToReg_ex   : 1;
-    constToReg_wb <= (rstn&&!isJmp_ex) ? constToReg_ex : 0;
-    regWrite_wb   <= (rstn&&!isJmp_ex) ? regWrite_ex   : 0;
-    op0_wb        <= (rstn&&!isJmp_ex) ? op0_ex        : 0;
-    resAlu_wb     <= (rstn&&!isJmp_ex) ? resAlu_ex     : 0;
-    dataConst_wb  <= (rstn&&!isJmp_ex) ? dataConst_ex  : 0;
-end
+always @(posedge clk)
+    if (!halt_ext) begin
+        isJmp_wb      <= rstn ? (isJmp_ex&&!isJmp_wb) : 0;
+        pc_next_wb    <= rstn ? (isJmp_wb  ? pc_next_wb + 1
+                                           : pc_next_ex)   : 1;
+        aluToReg_wb   <= (rstn&&!isJmp_ex) ? aluToReg_ex   : 1;
+        constToReg_wb <= (rstn&&!isJmp_ex) ? constToReg_ex : 0;
+        regWrite_wb   <= (rstn&&!isJmp_ex) ? regWrite_ex   : 0;
+        op0_wb        <= (rstn&&!isJmp_ex) ? op0_ex        : 0;
+        resAlu_wb     <= (rstn&&!isJmp_ex) ? resAlu_ex     : 0;
+        dataConst_wb  <= (rstn&&!isJmp_ex) ? dataConst_ex  : 0;
+    end
 
 endmodule

@@ -1,5 +1,4 @@
 `include "defs.vh"
-`include "timescale.vh"
 
 module register_file_full_seq #(
     parameter index_width = 3,

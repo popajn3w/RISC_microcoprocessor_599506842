@@ -1,5 +1,4 @@
 `include "defs.vh"
-`include "timescale.vh"
 
 // combinational read, sequential posedge write
 module pc #(
